@@ -40,6 +40,41 @@ class ThreadController extends Controller
         return response()->json(['thread' => $thread], 201);
     }
 
+
+    public function index($courseId)
+    {
+        $course = Course::find($courseId);
+        if ($course) {
+            $threads = $course->threads; // Get threads for the course
+            return response()->json($threads);
+        }
+    
+        return response()->json(['message' => 'Course not found'], 404);
+    }
+
+
+public function store(Request $request, $courseId)
+{
+    $course = Course::findOrFail($courseId);
+
+    // Validate that the user is the instructor or has permission to create threads
+    $this->authorize('create', Thread::class); // Custom policy check (optional)
+
+    $request->validate([
+        'content' => 'required|string',
+    ]);
+
+    $thread = Thread::create([
+        'course_id' => $courseId,
+        'instructor_id' => Auth::id(), // Assuming authenticated user is the instructor
+        'content' => $request->content,
+    ]);
+
+    return response()->json($thread, 201);
+}
+
+
+
     public function storeReply(Request $request, $threadId)
     {
         $user = Auth::user();
@@ -60,6 +95,7 @@ class ThreadController extends Controller
         return response()->json(['reply' => $reply], 201);
     }
     
+
 
     public function delete($thread_id)
     {

@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -45,9 +47,32 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    Route::get('courses/aaaaaa', [CourseController::class, 'myCourses']);  // enrolledCourses by students
+    Route::get('courses/instructor_courses', [CourseController::class, 'myCourses']);  // enrolledCourses by students
+    Route::get('courses/{courseId}/threads', [CourseController::class, 'getThreads']);
+    Route::post('threads/{thread}/replies', [ReplyController::class, 'store']);
 
 
+});
+Route::get('/courses/{course_id}/threads', [ThreadController::class, 'index']);
+// Create a new thread
+Route::post('/courses/{course_id}/threads', [ThreadController::class, 'create']);
+// Fetch all replies for a thread
+Route::get('/threads/{thread_id}/replies', [ReplyController::class, 'index']);
+// Create a new reply
+Route::post('/threads/{thread_id}/replies', [ReplyController::class, 'create']);
+Route::get('/courses/{courseId}', [CourseController::class, 'show']);
+Route::middleware(['auth:api'])->group(function () {
+    // Get all users
+    Route::get('/admin/users', [AdminController::class, 'getAllUsers']);
+    
+    // Get all courses
+    Route::get('/admin/courses', [AdminController::class, 'getAllCourses']);
+    
+    // Delete a user by ID
+    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
+    
+    // Delete a course by ID
+    Route::delete('/admin/courses/{id}', [AdminController::class, 'deleteCourse']);
 });
 
 

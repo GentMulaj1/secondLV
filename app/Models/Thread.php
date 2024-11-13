@@ -20,4 +20,11 @@ class Thread extends Model
     {
         return $this->hasMany(Reply::class);
     }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id'); // Assuming the instructor is a user
+    }
+
+
 }

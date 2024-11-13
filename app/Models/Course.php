@@ -16,20 +16,21 @@ class Course extends Model
         return $this->belongsTo(User::class, 'instructor_id');
     }
 
-    public function threads()
-    {
-        return $this->hasMany(Thread::class);
-    }
-
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_user');
     }
 
     public function users()
+    {
+        return $this->belongsToMany(User::class, 'course_user', 'course_id', 'user_id');
+    }
+
+public function threads()
 {
-    return $this->belongsToMany(User::class, 'course_user', 'course_id', 'user_id');
+    return $this->hasMany(Thread::class);
 }
 
+ 
 
 }

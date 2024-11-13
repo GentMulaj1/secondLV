@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,5 +47,26 @@ class UserController extends Controller
         
         // Return the role of the user (e.g., student, admin, instructor)
         return response()->json(['role' => $user->role]);
+    }
+
+
+
+
+
+
+
+    public function index()
+    {
+        // Retrieve all users
+        return User::all();
+    }
+
+    public function destroy($id)
+    {
+        // Find the user by ID and delete
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully.']);
     }
 }

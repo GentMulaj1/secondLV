@@ -36,6 +36,37 @@ class ReplyController extends Controller
          return response()->json(['reply' => $reply], 201);
      }
 
+     public function index($thread_id)
+{
+    $thread = Thread::findOrFail($thread_id);
+    $replies = $thread->replies;
+
+    return response()->json($replies);
+}
+
+
+
+
+
+public function store(Request $request, $threadId)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $thread = Thread::findOrFail($threadId);
+        
+        // Assuming that 'user_id' is the ID of the authenticated student
+        $reply = $thread->replies()->create([
+            'content' => $validated['content'],
+            'user_id' => Auth::id(),
+        ]);
+
+        return response()->json($reply, 201); // Return the created reply
+    }
+
+
+
    
     public function delete($reply_id)
     {

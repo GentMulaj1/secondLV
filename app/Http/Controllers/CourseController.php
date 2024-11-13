@@ -35,6 +35,22 @@ class CourseController extends Controller
     return response()->json($courses);
 }
 
+public function getThreads($courseId)
+{
+    try {
+        // Find the course by its ID
+        $course = Course::findOrFail($courseId);
+
+        // Retrieve all threads for the given course
+        $threads = $course->threads;  // Using the hasMany relationship
+
+        // Return the threads as a JSON response
+        return response()->json($threads, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Course not found or error fetching threads.'], 404);
+    }
+}
+
 public function update(Request $request, $courseId)
 {
     $course = Course::findOrFail($courseId);
@@ -74,6 +90,19 @@ public function enroll(Request $request, $courseId)
 }
 
 
+public function show($courseId)
+{
+    $course = Course::find($courseId);
+    
+    if (!$course) {
+        return response()->json(['message' => 'Course not found'], 404);
+    }
+
+    return response()->json($course);
+}
+
+
+
 
     public function delete(Request $request, $courseId)
     {
@@ -84,7 +113,6 @@ public function enroll(Request $request, $courseId)
             return response()->json(['message' => 'Unauthorized'], 403);
         }
     
-        // Delete the course
         $course->delete();
     
         return response()->json(['message' => 'Course deleted successfully'], 200);
@@ -129,11 +157,11 @@ public function enroll(Request $request, $courseId)
 
 
 
-public function myCourses()
-{
-    $user = Auth::user(); // Get the currently authenticated user
-    $courses = Course::where('instructor_id', $user->id)->get(); // Get courses where instructor_id matches the user's ID
-    return response()->json($courses);
-}
+    public function myCourses()
+    {
+        $user = Auth::user(); // Get the currently authenticated user
+        $courses = Course::where('instructor_id', $user->id)->get(); // Get courses where instructor_id matches the user's ID
+        return response()->json($courses);
+    }
 
 }
